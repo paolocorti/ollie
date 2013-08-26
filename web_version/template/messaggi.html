@@ -1,0 +1,73 @@
+<script>
+   // $(document).ready(function() {
+
+    var text = new Array();
+                      
+    $.ajax ({type: "POST", data : {id_sender: profileID}, url: 'http://trinity.micc.unifi.it/ollie/ollie_php/selezioneMessaggi.php'}).done(function(data) { 
+                                                                                                                      
+       var messages = $.parseJSON(data);
+       var sender = profileID;
+                                                                                                                                           
+       alert(data)                                                                                                                                    
+                                                                                                                                                                        
+                                                                                                                                           
+    $.each(messages, function(i, value){
+
+           text[i] = value.messaggi;
+           
+           
+            $('.etichetta_bianca_messaggi').append("<div class='personal_interests_messaggi'><div class='photo_user_messaggi'><img src="+value.foto+" /> </div><div class='nome_messaggi'><strong>"+value.nome+"</strong></div><div class='freccia'><img src='graphics/freccia.svg' class='freccia' id='"+i+"'/></div></div>");
+    }); 
+
+            
+           $('.personal_interests_messaggi').click( function() {  
+                               
+                               var id = $(this).attr('id'); 
+                               
+                               var array = text[id];
+                              
+                               
+                               $("#main_content_inner").load("chat_viewer.html",function() {
+                                                             
+                                                             /*$(".header_options").addClass("back");
+                                                             
+                                                             $(".back").click(function(){
+                                                                              
+                                                                              $('.etichetta_bianca_messaggi').empty();
+                                                                              
+                                                                              $("#main_content_inner").load("messaggi.html")
+                                                                              
+                                                                              }); */
+                             $.each(array, function(i, msg){ 
+                                    
+                                    //alert(msg.nome)
+                                    //alert(msg.mitt)
+                                
+                                    
+                                    //if ( sender == msg.mitt) {                                                                                                                                                     
+                                
+                                    
+                                     $('.contenitore_chat').append("<p>"+msg+"</p>");
+                                    
+                                    /*} else {                                                                                                                                                   
+                                    
+                                    $('.contenitore_chat').append("<div class='chat-bubble-orange'><div class='chat-bubble-glare-orange'><div class='photo_chat'> <img src='"+msg.foto+"' width='25' heigth='25'/></div><p>"+msg.messagge+"</p><div class='chat-bubble-arrow-border-orange'></div><div class='chat-bubble-arrow-orange'></div></div>");
+                                    
+                                    }*/
+                                    
+                                    });
+                                });     
+                              
+           });
+                                                                                                                                           
+                                                                                                                                
+      });
+//});       
+ 
+    
+</script>
+
+<div class="etichetta_bianca_messaggi">
+
+</div>
+

@@ -2,7 +2,7 @@
   "name": "ollie",
   "version": "0.0.0",
   "dependencies": {
-    "sass-bootstrap": "~2.3.0",
+    "sass-bootstrap": "latest",
     "jquery": "~1.9.0",
     "underscore": "~1.4.3",
     "backbone": "~1.0.0",

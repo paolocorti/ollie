@@ -1,0 +1,7 @@
+<ul id="thelist">
+<div id="fondo_arancione">
+	 <img id="logo_login" src="graphics/ollie_1.svg" />
+	 <div id="effettua"><p class="p4"><strong>Effettua il login con</strong></p></div>
+	 <img id="logo_login"  src="graphics/facebook.svg" />
+</div>
+</ul>

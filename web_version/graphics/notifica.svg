@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 15.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Livello_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="10px" height="10px" viewBox="0 0 10 10" enable-background="new 0 0 10 10" xml:space="preserve">
+<g>
+	
+		<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="-1101.3745" y1="248.96" x2="-1092.4419" y2="248.96" gradientTransform="matrix(0 1 -1 0 254 1102)">
+		<stop  offset="0" style="stop-color:#FAB749"/>
+		<stop  offset="1" style="stop-color:#EF7836"/>
+	</linearGradient>
+	<circle fill="url(#SVGID_1_)" cx="5.041" cy="5.092" r="4.466"/>
+	<path fill="#8C4E14" d="M5.041,9.826c-2.611,0-4.735-2.124-4.735-4.734c0-2.611,2.124-4.734,4.735-4.734s4.734,2.124,4.734,4.734
+		C9.774,7.702,7.651,9.826,5.041,9.826z M5.041,0.895c-2.314,0-4.198,1.883-4.198,4.197s1.883,4.197,4.198,4.197
+		c2.314,0,4.197-1.883,4.197-4.197S7.354,0.895,5.041,0.895z"/>
+</g>
+<g>
+	
+		<linearGradient id="SVGID_2_" gradientUnits="userSpaceOnUse" x1="-1101.6655" y1="249.041" x2="-1092.7339" y2="249.041" gradientTransform="matrix(0 1 -1 0 254 1102)">
+		<stop  offset="0" style="stop-color:#FAB749"/>
+		<stop  offset="1" style="stop-color:#EF7836"/>
+	</linearGradient>
+	<circle fill="url(#SVGID_2_)" cx="4.959" cy="4.8" r="4.466"/>
+	<path fill="#FFFFFF" d="M4.959,9.534c-2.61,0-4.734-2.123-4.734-4.734s2.124-4.734,4.734-4.734S9.693,2.189,9.693,4.8
+		S7.569,9.534,4.959,9.534z M4.959,0.603c-2.314,0-4.197,1.883-4.197,4.197c0,2.314,1.883,4.197,4.197,4.197
+		c2.314,0,4.197-1.883,4.197-4.197C9.156,2.486,7.273,0.603,4.959,0.603z"/>
+</g>
+<g>
+	<path fill="#935215" d="M4.242,1.852h1.354v1.615l-0.351,2.97H4.601l-0.359-2.97V1.852z M4.273,6.95h1.292v1.249H4.273V6.95z"/>
+</g>
+<g>
+	<path fill="#FFFFFF" d="M4.242,1.537h1.354v1.615L5.245,6.121H4.601L4.242,3.152V1.537z M4.273,6.636h1.292v1.248H4.273V6.636z"/>
+</g>
+</svg>

@@ -1,0 +1,38 @@
+//////////////////////////
+//
+// Authentication
+// See "Logging the user in" on https://developers.facebook.com/mobile
+//
+//////////////////////////
+
+var user = [];
+
+//Detect when Facebook tells us that the user's session has been returned
+
+
+//Prompt the user to login and ask for the 'email' permission
+function promptLogin() {
+  FB.login(null, {scope: 'email,user_likes'});
+    $("#fb").hide("content_facebook.html");
+    
+    
+}
+
+//This will prompt the user to grant you acess to their Facebook Likes
+function promptExtendedPermissions() {
+  FB.login(function() {
+    setAction("The 'user_likes' permission has been granted.", false);
+    
+    setTimeout('clearAction();', 2000);
+    
+    document.body.className = 'permissioned';
+  }, {scope: 'user_likes'});
+}
+
+
+
+function logout() {
+  FB.logout(function(response) {
+    window.location.reload();
+  });
+}
