@@ -12,10 +12,11 @@ define([
 
         template: JST['app/scripts/templates/login.ejs'],
 
-    	el: '.container',
+    	el: 'body',
 
     	initialize: function () {
     		console.log('main view');
+            $('nav').hide();
     		this.render();
     	},
 

@@ -2,9 +2,37 @@ $iconSpritePath: '/images/glyphicons-halflings.png';
 @import 'sass-bootstrap/lib/bootstrap';
 
 $orange: #FF8000;
+$grey: #DDDDDD;
+
+
+/* UTILTY */
+.centered {
+	margin-left: auto;
+	margin-right: auto;
+}
 
 body {
 	background-color: $orange;
+}
+
+#main-container {
+	max-width: 100%;
+	padding-left: 0px;
+	padding-right: 0px;
+}
+
+.container {
+	margin-top: 20px;
+	margin-bottom: 80px;
+}
+
+#map {
+	width: 100%;
+	height: 850px;
+}
+
+.background {
+	background-color: $grey;
 }
 
 .hero-unit {
@@ -12,3 +40,15 @@ body {
     width: 300px;
 }
 
+.ui-login-container{
+	width: 50%;
+	margin-top: 10%;
+}
+
+.ui-profile-header {
+	margin: 20px;
+}
+
+.ui-profile-content {
+	
+}

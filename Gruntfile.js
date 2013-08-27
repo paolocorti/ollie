@@ -118,13 +118,45 @@ module.exports = function (grunt) {
                 'test/spec/{,*/}*.js'
             ]
         },
+        // mocha: {
+        //     all: {
+        //         options: {
+        //             run: true,
+        //             urls: ['http://localhost:<%= connect.options.port %>/index.html'],
+        //             //timeout: 10000
+        //         }
+        //     }
+        // },
+        // mocha: {
+        //     src: [ 'test/index.html' ],
+        //     options: {
+        //       // Bail means if a test fails, grunt will abort. False by default.
+        //       bail: true,
+
+        //       // Pipe output console.log from your JS to grunt. False by default.
+        //       log: true,
+
+        //       // mocha options
+        //       mocha: {
+        //         ignoreLeaks: false,
+        //         grep: 'food'
+        //       },
+
+        //       // Select a Mocha reporter
+        //       // http://visionmedia.github.com/mocha/#reporters
+        //       reporter: 'Nyan',
+
+        //       // Indicates whether 'mocha.run()' should be executed in
+        //       // 'bridge.js'. If you include `mocha.run()` in your html spec,
+        //       // check if environment is PhantomJS. See example/test/test2.html
+        //       run: true,
+
+        //       // Override the timeout of the test (default is 5000)
+        //       timeout: 10000
+        //     }
+        // },
         mocha: {
-            all: {
-                options: {
-                    run: true,
-                    urls: ['http://localhost:<%= connect.options.port %>/index.html']
-                }
-            }
+          all: [ 'test/index.html' ]
         },
         coffee: {
             dist: {
