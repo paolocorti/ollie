@@ -82,30 +82,28 @@ define([
 
 	        map.setView([this.latitude, this.longitude], 13);
 
-	        map.markerLayer.on('layeradd', function(e) {
-			    var marker = e.layer,
-			        feature = marker.feature;
-
-			    marker.setIcon(L.icon(feature.properties.icon));
-			});
-
-	        map.markerLayer.setGeoJSON({
+		    var properties = {
 		        type: 'Feature',
 		        geometry: {
 		            type: 'Point',
-		            coordinates: [this.longitude, this.latitude]
+		            coordinates: [this.latitude,this.longitude]
 		        },
 		        properties: {
-		            'title': 'Me',
+		            'title': me.fbname,
 			        'icon': {
-			            'iconUrl': 'http://graph.facebook.com/'+me.id+'/picture',
+			            'iconUrl': 'http://graph.facebook.com/'+ me.id +'/picture',
 			            'iconSize': [50, 50], // size of the icon
 			            'iconAnchor': [25, 25], // point of the icon which will correspond to marker's location
 			            'popupAnchor': [0, -25],  // point from which the popup should open relative to the iconAnchor
 			            'className': 'img-circle img-thumbnail'
-				    }
+			        }
 		        }
-		    });
+		    };
+
+			var coords = properties.geometry.coordinates;
+			var marker = new L.marker(coords, {icon: L.icon(properties.properties.icon)});
+
+			map.addLayer(marker);
 
 	        // var latLngMe = new google.maps.LatLng(this.latitude,this.longitude);
 	        // map.panTo(latLngMe);
@@ -120,7 +118,7 @@ define([
 	        //                                       zIndex : 1000
 	        //                                       });
 	            
-	        // allUsersMarkers.push({'socketId':mySocketId, 'fbId': profileID, 'marker': mymarker});  
+	        allUsersMarkers.push({'socketId': this.mySocketId, 'fbId': me.fbid, 'marker': marker});  
 	        // console.log(allUsersMarkers);
 	        // var myPoint = new google.maps.LatLng(this.latitude,this.longitude);
 	        // var myPosObj = {'id':mySocketId+'-'+profileID, 'point': myPoint}
@@ -137,12 +135,14 @@ define([
 	    	if(!onLine) {
 	            var socket = io.connect('trinity.micc.unifi.it:9999');
 	            socket.on('connect', function() {
+
+	            	onLine = 1;
 	            	
 	            	console.log('connect')
 
 	            	socket.on('socketID', function(response) {
-	            		var mySocketId = response;
-	            		console.log(mySocketId);
+	            		
+	            		this.mySocketId = response;
 
 	            		socket.emit(
 	                        'update_user_on_map', 
@@ -152,7 +152,7 @@ define([
 	                            fbpic: 'https://graph.facebook.com/'+user.id+'/picture',
 	                            lat: self.latitude, 
 	                            lng: self.longitude, 
-	                            socketid: mySocketId, 
+	                            socketid: this.mySocketId, 
 	                            online: onLine,
 	                            notify: true
 	                        }
@@ -162,7 +162,7 @@ define([
 	            	socket.on('new_user', function (newUserData) {
 	                    var friendmodel = new FriendModel();
 	                    friendmodel.set(newUserData);
-	                    console.log('new user__'+friendmodel);
+	                    console.log('new user__'+ friendmodel );
 	                    self.addMarker(friendmodel);
 	                    friendscollection.push(friendmodel);
 	                    console.log('new friend collection__'+JSON.stringify(friendscollection));
@@ -179,8 +179,6 @@ define([
 	            });
 	            
 	            socket.on('user_disconnected', function (socketID) {
-	                alert('user_disconnected');
-	                alert('function deleteMarker');
 	                self.deleteMarker(socketID);
 	            });
 	        } else {
@@ -220,28 +218,23 @@ define([
                 var name = model.get('fbname');
                 var socketID = model.get('socketid');
 
-                map.markerLayer.on('layeradd', function(e) {
-			    	var marker = e.layer,
-			        feature = marker.feature;
+    //             map.markerLayer.on('layeradd', function(e) {
+			 //    	var marker = e.layer,
+			 //        feature = marker.feature;
 
-				    marker.setIcon(L.icon(feature.properties.icon));
+				//     marker.setIcon(L.icon(feature.properties.icon));
 				    
-				    var popupContent =  '<a target="_blank" class="popup" href="#">' + '<h2>' + name + '</h2>' + '</a>';
+				var popupContent =  '<a target="_blank" class="popup" href="#">' + '<h5>' + name + '</h5>' + '</a>';
 
-				    // http://leafletjs.com/reference.html#popup
-				    marker.bindPopup(popupContent,{
-				        closeButton: false,
-				        minWidth: 320
-				    });
-				});
+				var markers = map.markerLayer.getGeoJSON();
 
-				var markers = [map.markerLayer.getGeoJSON()];
+				var index = markers.length;
 
-		        markers.push({
+		    	var properties = {
 			        type: 'Feature',
 			        geometry: {
 			            type: 'Point',
-			            coordinates: [lng, lat]
+			            coordinates: [lat,lng]
 			        },
 			        properties: {
 			            'title': name,
@@ -253,11 +246,21 @@ define([
 				            'className': 'img-circle img-thumbnail'
 				        }
 			        }
-			    });
+			    };
 
-			    map.markerLayer.setGeoJSON(markers);
+			   
+			    //var feature = newMarker.feature;
+			    var coords = properties.geometry.coordinates;
+			    var marker = new L.marker(coords, {icon: L.icon(properties.properties.icon)}).bindPopup(popupContent,{
+				        closeButton: true,
+				        minWidth: 100
+				    });
 
-			    console.log(markers)
+			    map.addLayer(marker);
+
+			    //map.markerLayer.setGeoJSON(markers);
+
+			    //console.log(markers)
 
                                              
                 // var marker = new MarkerWithLabel({position: new google.maps.LatLng(lat, lng),
@@ -274,7 +277,8 @@ define([
 	                    
 	            // LatLngList.push(latlngObj);
 	                                                                     
-	            // allUsersMarkers.push({'socketId':socketID, 'fbId': user_fbid, 'marker': marker});                     
+	            allUsersMarkers.push({'socketId':socketID, 'fbId': fbid, 'marker': marker});   
+	            console.log('users connected: '+ allUsersMarkers);                  
 	                        
 	            // var boxText = document.createElement('div');
 	            //         boxText.innerHTML = '<h4 class='userprofilelink'>'+ name +'</h4>';
@@ -324,308 +328,121 @@ define([
 	        });                                                            
 	    },
 
-	    /*socketon: function () {
-	        var self = this;
-	        console.log('init socket');
-	        profilePicture = 'https://graph.facebook.com/'+this.model.get('id')+'/picture';
-	        profileID = this.model.get('id');
-	        profileName = this.model.get('username');
-	        if(!onLine) {
-	            socket = io.connect('trinity.micc.unifi.it:9999');
-	            socket.on('connect', function() {
-	                onLine = 1;
-	                socket.on('socketID', function (response) {
-	                    mySocketId = response;
-	                    self.initMe();  
-	                    //alert(' my socket id: ' + mySocketId + ' fbid: ' + profileID + ' fbname: ' + profileName + 'fbpic' + profilePicture);
-	                    socket.emit(
-	                        'update_user_on_map', 
-	                        {
-	                            fbid: profileID, 
-	                            fbname: profileName, 
-	                            fbpic: profilePicture, 
-	                            lat: self.latitude, 
-	                            lng: self.longitude, 
-	                            socketid: mySocketId, 
-	                            online: onLine,
-	                            notify: true
-	                        }
-	                    );
-	                });
-	                socket.on('new_user', function (newUserData) {
-	                    var friendmodel = new FriendModel();
-	                    friendmodel.set(newUserData);
-	                    console.log('new user__'+friendmodel);
-	                    self.addMarker(friendmodel);
-	                    friendscollection.push(friendmodel);
-	                    console.log('new friend collection__'+JSON.stringify(friendscollection));
-	                    //var info = response;
-	                    //initFriends(info);
-	                });
-	                socket.on('user_position_data', function (friendsData) {
-	                    var friends = $.parseJSON(friendsData);
-	                    friendscollection.add(friends);
-	                    console.log('friend collection__'+JSON.stringify(friendscollection));
-	                    self.updateFriends();
-	                });           
-	            });
-	            
-	            socket.on('user_disconnected', function (socketID) {
-	                alert('user_disconnected');
-	                alert('function deleteMarker');
-	                self.deleteMarker(socketID);
-	            });
-	        } else {
-	            console.log('else socketOn');
-	            console.log(self);
-	            self.initMe();
-	            socket.emit(
-	                    'update_user_on_map', 
-	                    {
-	                        fbid: profileID, 
-	                        fbname: profileName, 
-	                        fbpic: profilePicture, 
-	                        lat: this.latitude, 
-	                        lng: this.longitude, 
-	                        socketid: mySocketId, 
-	                        online: onLine,
-	                        notify: false
-	                    }
-
-	            );
-	        }
-
-	    },
-
-	    initMe: function () {
-	        console.log('initme') 
-	        var latLngMe = new google.maps.LatLng(this.latitude,this.longitude);
-	        map.panTo(latLngMe);
-	        var myicon = new google.maps.MarkerImage('./graphics/user.png',
-	                                                 null,
-	                                                 null,
-	                                                 null,
-	                                                 new google.maps.Size(64, 80));
-	        var mymarker = new google.maps.Marker({position: latLngMe,
-	                                              map: map,
-	                                              icon: myicon,
-	                                              zIndex : 1000
-	                                              });
-	            
-	        allUsersMarkers.push({'socketId':mySocketId, 'fbId': profileID, 'marker': mymarker});  
-	        console.log(allUsersMarkers);
-	        var myPoint = new google.maps.LatLng(this.latitude,this.longitude);
-	        var myPosObj = {'id':mySocketId+'-'+profileID, 'point': myPoint}
-	        
-	        LatLngList.push(myPosObj);
-	        console.log(LatLngList);
-	        //boundMarker();
-	        mgr.refresh();
-	    },
-
 	    addMarker: function(usermodel) {
-	            var self = this;
-	            console.log('add marker')
+            
+            var self = this;
+            console.log('add marker');
 
-	            var lat = usermodel.get('lat');
-	            var lng = usermodel.get('lng');
-	            var pic = usermodel.get('fbpic');
-	            var user_fbid = usermodel.get('id');
-	            var name = usermodel.get('fbname');
-	            var socketID = usermodel.get('socketid');
-	            var pictureLabel = document.createElement('img');
-	            pictureLabel.src = pic;
-	                                         
-	            var icon = 'graphics/users.svg';
-	                                         
-	            var marker = new MarkerWithLabel({position: new google.maps.LatLng(lat, lng),
-	                map: map,
-	                id: socketID+'-'+user_fbid,
-	                icon: icon,                                                   
-	                labelContent: pictureLabel,
-	                labelAnchor: new google.maps.Point(25, 80),
-	                labelClass: 'labels',
-	                labelStyle: {opacity: 1}
-	            });
-	            allUsersMarkers.push({'socketId':socketID, 'fbId': user_fbid, 'marker': marker});                     
+            var lat = usermodel.get('lat');
+            var lng = usermodel.get('lng');
+            var pic = usermodel.get('fbpic');
+            var fbid = usermodel.get('fbid');
+            var name = usermodel.get('fbname');
+            var socketID = usermodel.get('socketid');
+            var pictureLabel = document.createElement('img');
+            pictureLabel.src = pic;
+
+            map.markerLayer.on('layeradd', function(e) {
+			    	var marker = e.layer,
+			        feature = marker.feature;
+
+				    marker.setIcon(L.icon(feature.properties.icon));
+				    
+				    var popupContent =  '<a target="_blank" class="popup" href="#">' + '<h5>' + name + '</h5>' + '</a>';
+
+				    // http://leafletjs.com/reference.html#popup
+				    marker.bindPopup(popupContent,{
+				        closeButton: true,
+				        minWidth: 100
+				    });
+
+				    map.addLayer(marker);
+			});
+
+		    var marker = {
+			        type: 'Feature',
+			        geometry: {
+			            type: 'Point',
+			            coordinates: [lng, lat]
+			        },
+			        properties: {
+			            'title': name,
+				        'icon': {
+				            'iconUrl': 'http://graph.facebook.com/'+fbid+'/picture',
+				            'iconSize': [50, 50], // size of the icon
+				            'iconAnchor': [25, 25], // point of the icon which will correspond to marker's location
+				            'popupAnchor': [0, -25],  // point from which the popup should open relative to the iconAnchor
+				            'className': 'img-circle img-thumbnail'
+				        }
+			        }
+			    };
+                                         
+            allUsersMarkers.push({'socketId':socketID, 'fbId': fbid, 'marker': marker});                     
+	        console.log('users connected: '+ allUsersMarkers);
+
+	            // var boxText = document.createElement('div');
+	            // boxText.innerHTML = '<h4 class='userprofilelink'>'+ name +'</h4>';
 	            
-	            /*var boxText = document.createElement('div');
-	            boxText.innerHTML = '<h4 class='userprofilelink'>'+ name +'</h4>';
-	            
-	            var myOptions = {
-	                 content: boxText,
-	                 disableAutoPan: true,
-	                 maxWidth: 0,
-	                 pixelOffset: new google.maps.Size(-75, 0),
-	                 zIndex: null,
-	                 closeBoxMargin: '10px 2px 2px 2px',
-	                 closeBoxURL: 'graphics/chiudi.png',
-	                 infoBoxClearance: new google.maps.Size(1, 1),
-	                 isHidden: false,
-	                 pane: 'floatPane',
-	                 enableEventPropagation: true
-	              };
+	            // var myOptions = {
+	            //      content: boxText,
+	            //      disableAutoPan: true,
+	            //      maxWidth: 0,
+	            //      pixelOffset: new google.maps.Size(-75, 0),
+	            //      zIndex: null,
+	            //      closeBoxMargin: '10px 2px 2px 2px',
+	            //      closeBoxURL: 'graphics/chiudi.png',
+	            //      infoBoxClearance: new google.maps.Size(1, 1),
+	            //      isHidden: false,
+	            //      pane: 'floatPane',
+	            //      enableEventPropagation: true
+	            //   };
 	                                         
-	             var ib = new InfoBox(myOptions);
+	            //  var ib = new InfoBox(myOptions);
 	             
-	             var ibObj = {'user' : socketID, 'info' : ib};
+	            //  var ibObj = {'user' : socketID, 'info' : ib};
 	             
-	             allUsersInfobox.push(ibObj);
+	            //  allUsersInfobox.push(ibObj);
 	            
 	                                         
-	             google.maps.event.addListener(marker, 'click', function () { 
+	            //  google.maps.event.addListener(marker, 'click', function () { 
 	             
-	                    alert('click')
+	            //         alert('click')
 
-	                    /*for (var m in allUsersInfobox) {
+	            //         for (var m in allUsersInfobox) {
 
-	                      if(allUsersInfobox[m].user == this.id) {
-	                        allUsersInfobox[m].info.open(map, this);
+	            //           if(allUsersInfobox[m].user == this.id) {
+	            //             allUsersInfobox[m].info.open(map, this);
 
-	                      }   else {
-	                        allUsersInfobox[m].info.close();
-	                      }                 
-	                    }
+	            //           }   else {
+	            //             allUsersInfobox[m].info.close();
+	            //           }                 
+	            //         }
 	                                           
-	                    if (allmarkersplace.length > 0){
-	                                           deletePlaces();
-	                                           }
-	                    this.getPlaces(usermodel);
+	            //         if (allmarkersplace.length > 0){
+	            //                                deletePlaces();
+	            //                                }
+	            //         this.getPlaces(usermodel);
 	                                              
-	              });//END addListener marker, 'click'
-	             //var latlngObj = {'id' : socketID+'-'+user_fbid, 'point': new google.maps.LatLng(lat, lng)};
+	            //   });//END addListener marker, 'click'
+	            //  //var latlngObj = {'id' : socketID+'-'+user_fbid, 'point': new google.maps.LatLng(lat, lng)};
 	                    
-	             //LatLngList.push(latlngObj);
+	            //  //LatLngList.push(latlngObj);
 
-	             mgr.addMarker(marker, 0);
-	             //boundMarker();
-	             mgr.refresh();
-	    },
-
-	    updateFriends: function (friendsData) {
-	      var self = this;
-	                    console.log('updateFriends')
-	                //$.each(friends, function(i, datauser){
-	                   // alert(datauser.fbid);
-	        friendscollection.each(function( model ){  
-
-	                    var lat = model.get('lat');
-	                    var lng = model.get('lng');
-	                    var pic = model.get('fbpic');
-	                    var user_fbid = model.get('name');
-	                    var name = model.get('fbname');
-	                    var socketID = model.get('socketid');
-	                                                 
-	                    var pictureLabel = document.createElement('img');
-	                    pictureLabel.src = pic;
-	                                                 
-	                    var icon = 'graphics/users.svg';
-	                                                 
-	                    var marker = new MarkerWithLabel({position: new google.maps.LatLng(lat, lng),
-	                        map: map,
-	                        id: socketID+'-'+user_fbid,
-	                        icon: icon,                                                   
-	                        labelContent: pictureLabel,
-	                        labelAnchor: new google.maps.Point(25, 80),
-	                        labelClass: 'labels',
-	                        labelStyle: {opacity: 1}
-	                    });
-	                    
-	                    
-	                    var latlngObj = {'id': socketID+'-'+user_fbid, 'point': new google.maps.LatLng(lat, lng)};
-	                    
-	                    LatLngList.push(latlngObj);
-	                                                                     
-	                    allUsersMarkers.push({'socketId':socketID, 'fbId': user_fbid, 'marker': marker});                     
-	                        
-	                    var boxText = document.createElement('div');
-	                    boxText.innerHTML = '<h4 class='userprofilelink'>'+ name +'</h4>';
-	                    
-	                    var myOptions = {
-	                         content: boxText,
-	                         disableAutoPan: true,
-	                         maxWidth: 0,
-	                         pixelOffset: new google.maps.Size(-75, 0),
-	                         zIndex: null,
-	                         closeBoxMargin: '10px 2px 2px 2px',
-	                         closeBoxURL: 'graphics/chiudi.png',
-	                         infoBoxClearance: new google.maps.Size(1, 1),
-	                         isHidden: false,
-	                         pane: 'floatPane',
-	                         enableEventPropagation: true
-	                      };
-	                                                 
-	                     var ib = new InfoBox(myOptions);
-	                     
-	                     var ibObj = {'user' : socketID, 'info' : ib};
-	                     
-	                     allUsersInfobox.push(ibObj);
-	                    
-	                                                 
-	                     google.maps.event.addListener(marker, 'click', function () { 
-	                     
-	                            for (var m in allUsersInfobox) {
-
-	                              if(allUsersInfobox[m].user == this.id) {
-	                                allUsersInfobox[m].info.open(map, this);
-	                              }   else {
-	                                allUsersInfobox[m].info.close();
-	                              }                 
-	                            }
-	                            if (allmarkersplace.length > 0){
-	                                //deletePlaces();
-	                            }
-	                            self.getPlaces(model);                                                        
-	                      });//END addListener marker, 'click' 
-	                       
-	                    mgr.addMarker(marker, 0);
-	                                   
-	          //boundMarker();
-	          mgr.refresh();
-	          }, this ); 
-	                                                                
+	            //  mgr.addMarker(marker, 0);
+	            //  //boundMarker();
+	            //  mgr.refresh();
 	    },
 
 	    deleteMarker: function (socketID) {
-	        alert('socket da cancellare ' + socketID);      
-	          for (var i in allUsersMarkers) {                
+	         
+	        for (var i in allUsersMarkers) {                
 	            if(allUsersMarkers[i].socketId == socketID) {     
-	              mgr.removeMarker(allUsersMarkers[i].marker)
-	              delete allUsersMarkers[i];
+	              map.removeLayer(allUsersMarkers[i].marker);
 	              break;
-	              }                
-	          } 
-	      /*    
-	      for (var i in allUsersInfobox) {
-	                  
-	          if(allUsersInfobox[i].user == socketID) {
-	            
-	          allUsersInfobox[i].info.close();
-	          delete allUsersInfobox[i];
-	  
-	          //alert(allUsersInfobox.length);
-	  
-	          break;
-	          }                
-	      }
-	      
-	            
-	        
-	      for (var i in LatLngList) {
-	                alert(LatLngList[i].id);
-	          if(LatLngList[i].id.indexOf(socketID)!== -1) {
-	                      
-	                alert('deleted '+LatLngList[i].id);
-	                      
-	          delete LatLngList[i];
-	          break;
-	                    
-	          }          
-	                
-	       }  
-	      
+	            }                
+	        } 
 	    },
-
+		/*
 	    getPlaces: function (info) {
 	        var placelabel;
 	        var imgplace;

@@ -52,3 +52,20 @@ body {
 .ui-profile-content {
 	
 }
+
+.img-thumbnail {
+	background: rgb(53, 53, 53);
+	border: 0px;
+}
+
+.leaflet-popup-content-wrapper {
+	border-radius: 5px;
+	background: rgb(53, 53, 53);
+}
+a .popup {
+	color: orange;
+}
+
+.leaflet-popup-tip {
+	background: rgb(53, 53, 53);
+}
