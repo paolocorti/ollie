@@ -52,7 +52,9 @@ require([
                 var accessToken = response.authResponse.accessToken;
                 FB.api('/me', function (response) {
                   user.set(response); // Aggiorna il model
+                  console.log(response);
                 });
+
                 new MainView({model: user});
             } else {
                 // the user isn't logged in to Facebook.
